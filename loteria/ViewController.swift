@@ -9,12 +9,13 @@
 import UIKit
 
 enum GameType: String {
-    case megasena = "Mega-Sena"
-    case quina = "Quina da Sorte"
+    case sixNum = "Seis números"
+    case sevenNum = "Sete números"
+    case eightNum = "Oito números"
 }
 
-infix operator >--<
-func >--< (total:Int, universe:Int) -> [Int] {
+infix operator >=<
+func >=< (total:Int, universe:Int) -> [Int] {
     var result: [Int] = []
     while result.count < total {
         let randomNumber = Int(arc4random_uniform(UInt32(universe))+1)
@@ -27,37 +28,49 @@ func >--< (total:Int, universe:Int) -> [Int] {
 
 class ViewController: UIViewController {
 
-    @IBOutlet weak var lbGameType: UILabel!
-    @IBOutlet weak var scGameType: UISegmentedControl!
-    @IBOutlet var balls: [UIButton]!
+    @IBOutlet weak var lbNumbersQuantity: UILabel!
+    @IBOutlet weak var scNumbersQuantity: UISegmentedControl!
+    @IBOutlet var ballsSequence: [UIButton]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        showNumbers(for: .megasena)
+        showNumbers(for: .sixNum)
     }
     
     func showNumbers(for type: GameType) {
-        lbGameType.text = type.rawValue
+        lbNumbersQuantity.text = type.rawValue
         var game: [Int] = []
         switch type {
-            case .megasena:
-                game = 6>--<60
-                balls.last!.isHidden = false
-            case .quina:
-                game = 5>--<80
-                balls.last!.isHidden = true
+            case .sixNum:
+                game = 6>=<60
+                ballsSequence[6].isHidden = true
+                ballsSequence[7].isHidden = true
+                lbNumbersQuantity.text = "Jogo para 6 números"
+            case .sevenNum:
+                game = 7>=<60
+                ballsSequence[6].isHidden = false
+                ballsSequence[7].isHidden = true
+                lbNumbersQuantity.text = "Jogo para 7 números"
+            case .eightNum:
+                game = 8>=<60
+                ballsSequence[6].isHidden = false
+                ballsSequence[7].isHidden = false
+                lbNumbersQuantity.text = "Jogo para 8 números"
+            
         }
         for (index, game) in game.enumerated() {
-            balls[index].setTitle("\(game)", for: .normal)
+            ballsSequence[index].setTitle("\(game)", for: .normal)
         }
     }
     
     @IBAction func generateGame() {
-        switch scGameType.selectedSegmentIndex {
+        switch scNumbersQuantity.selectedSegmentIndex {
             case 0:
-                showNumbers(for: .megasena)
+                showNumbers(for: .sixNum)
+            case 1:
+                showNumbers(for: .sevenNum)
             default:
-                showNumbers(for: .quina)
+                showNumbers(for: .eightNum)
         }
     }
 }
